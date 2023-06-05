@@ -74,3 +74,48 @@ if p >= 0.05 :
     else :
         print('No evidence of normality\n')
 print('---------------------------------')
+
+# Trend
+data['Trend'] = range(1, len(data)+ 1)
+data['Trend2'] = data['Trend']^2
+y = np.array(np.log(data['ms']))
+
+X = np.array([np.log(data['gdp']),
+              np.log(data['i']),
+              data['Trend'],
+              data['Trend2']])
+
+X = X.transpose()
+
+model = LinearRegression(fit_intercept=True)
+model.fit(X, y)
+model.coef_ # Elasticities
+e_gdp, e_i = model.coef_[:-2]
+model.score(X, y) #R2 values
+
+print('Elasticity for GDP: %.3f\n'\
+      'Elasticity for i: %.3f\n' % (e_gdp, e_i))
+
+residuals = y - model.predict(X)
+
+sns.lineplot(y = residuals, x = range(0, len(residuals)))
+acf(residuals, nlags = 10)
+
+# Evidences of autocorrelation. Estimates are not credible
+
+# Checking for normality
+
+sns.distplot(x = residuals)
+probplot(residuals, dist = 'norm', plot = pylab)
+
+stat, p = jarque_bera(residuals)
+
+print('---------------------------------\n'\
+    'Jarque-Bera test for normality\n'\
+    '---------------------------------\n'\
+    'Jarque-Bera: %.3f   P-value: %.3f\n' % (stat, p))
+if p >= 0.05 :
+        print('Evidence of normality\n')
+    else :
+        print('No evidence of normality\n')
+print('---------------------------------')
