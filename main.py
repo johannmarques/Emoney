@@ -32,6 +32,7 @@ adfuller(np.log(data['ms'])) # Not stationary :/
 data['ms_1'] = data['ms'].shift(1) # Using lagged value to diminish autocorrelation
 
 data['gdp'] = data['GDP']/np.cumprod(data['Infl'] /100 + 1)
+data['gdp_1'] = data['gdp'].shift(1)
 adfuller(np.log(data['gdp'])) # Not stationary :/
 
 data = data.dropna()
